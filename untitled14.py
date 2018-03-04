@@ -1,9 +1,12 @@
+#!/usr/bin/python3
 from flask import render_template, request, redirect, url_for, Flask,send_from_directory
 import os
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 import json
+
+from matrix_apply import apply_output_order
 #Flask object initialization
 #app flask object has to be created before importing views below
 #because it calls "import app from app"
@@ -66,8 +69,15 @@ def parsePhoto(filename):
     img.thumbnail(size, Image.ANTIALIAS)
     data = np.asarray(img, dtype="int32")
     points = {key : getColor(value, data) for key, value in COLORS.items()}
-    img.close()
+
+    plt.imshow(img) #, cmap='gray')
+    for x,y in points.values():
+        plt.scatter(x,y,s=40)
+
+    apply_output_order()
+    plt.show()
     return sortArrayByX(points)
+
 
 def sortArrayByX(d):
     toStr = lambda v: ','.join(map(str, v))
